@@ -22,17 +22,18 @@ sock.bind((HOST, PORT))
 sock.listen()
 
 end = False;
+conn,addr = sock.accept()
+print("Connection from:", addr)
 
 while end == False:
-    conn,addr = sock.accept()
-    print("Connection from:", addr)
 
     data = conn.recv(4096).decode() #Use conn.recv for a server, not sock.recv. 
-    #print(data)
         
     sendme = "test data"
     sendme = sendme.encode()
     conn.sendall(sendme)
+
+
 
 conn.close()
  
