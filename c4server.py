@@ -9,7 +9,7 @@ import string
 
 now = datetime.datetime.now(datetime.timezone.utc)
 date = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
-HOST = "10.213.190.227" #My google cloud VM
+HOST = "10.213.190.227" 
 PORT = 4040
 
 #create socket
@@ -21,15 +21,18 @@ sock.bind((HOST, PORT))
 
 sock.listen()
 
-conn,addr = sock.accept()
-print("Connection from:", addr)
+end = False;
 
-data = conn.recv(4096).decode() #Use conn.recv for a server, not sock.recv. 
-#print(data)
+while end == False:
+    conn,addr = sock.accept()
+    print("Connection from:", addr)
+
+    data = conn.recv(4096).decode() #Use conn.recv for a server, not sock.recv. 
+    #print(data)
         
-sendme = "test data"
-sendme = sendme.encode()
-conn.sendall(sendme)
+    sendme = "test data"
+    sendme = sendme.encode()
+    conn.sendall(sendme)
+
 conn.close()
-
-        
+ 
