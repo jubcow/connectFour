@@ -7,7 +7,6 @@ import datetime
 import os
 import string
 import array
-#import numpy as np
 
 now = datetime.datetime.now(datetime.timezone.utc)
 date = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -31,8 +30,8 @@ print("Connection from:", addr)
 array = [['-','-','-','-','-','-','-'], 
         ['-','-','-','-','-','-','-'], 
         ['-', '-', '-', '-','-','-','-'], 
+        ['-','-','-','-','-','-','-'],
         ['-','-','-','-','-','-','-']]
-
 #Helper function in case we need to see the server's view of the array
 def printArr():
     for i in array:
@@ -41,7 +40,7 @@ def printArr():
         print('\n')
 
 #Function that puts the current array into a string and returns the string to be sent to the client. 
-def SendArr():
+def sendArr():
     ArrayString = ""
 
     for i in array:
@@ -49,16 +48,22 @@ def SendArr():
             ArrayString = ArrayString + " " + j
         ArrayString = ArrayString + "\n\n"
 
+    ArrayString = ArrayString + " 0 1 2 3 4 5 6\n"
     return ArrayString
 
-while end == False:    
-    sendme = SendArr()
+while end == False:  
+    sendme = sendArr()
     sendme = sendme.encode()
     conn.sendall(sendme)
 
     data = conn.recv(4096).decode() #Use conn.recv for a server, not sock.recv.
     print(data)
-
+    if data == '0':
+        print("If '0' statement")
+        p = 4
+        while array[p][0] == 'o' or array[p][0] == 'x' and p > 0:
+            p-=1
+        array[p][0] = 'o'
 
 conn.close()
  
