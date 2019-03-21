@@ -25,14 +25,14 @@ end = False;
 conn,addr = sock.accept()
 print("Connection from:", addr)
 
-while end == False:
-
-    data = conn.recv(4096).decode() #Use conn.recv for a server, not sock.recv. 
-        
+array = [6][5]
+while end == False:    
     sendme = "test data"
     sendme = sendme.encode()
     conn.sendall(sendme)
 
+    data = conn.recv(4096).decode() #Use conn.recv for a server, not sock.recv.
+    print(data)
 
 
 conn.close()
