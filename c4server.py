@@ -6,6 +6,8 @@ import sys
 import datetime
 import os
 import string
+import array
+#import numpy as np
 
 now = datetime.datetime.now(datetime.timezone.utc)
 date = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -25,9 +27,32 @@ end = False;
 conn,addr = sock.accept()
 print("Connection from:", addr)
 
-array = [6][5]
+#Array Declaration with no moves made
+array = [['-','-','-','-','-','-','-'], 
+        ['-','-','-','-','-','-','-'], 
+        ['-', '-', '-', '-','-','-','-'], 
+        ['-','-','-','-','-','-','-']]
+
+#Helper function in case we need to see the server's view of the array
+def printArr():
+    for i in array:
+        for j in i:
+            print(j,end = " ")
+        print('\n')
+
+#Function that puts the current array into a string and returns the string to be sent to the client. 
+def SendArr():
+    ArrayString = ""
+
+    for i in array:
+        for j in i:
+            ArrayString = ArrayString + " " + j
+        ArrayString = ArrayString + "\n\n"
+
+    return ArrayString
+
 while end == False:    
-    sendme = "test data"
+    sendme = SendArr()
     sendme = sendme.encode()
     conn.sendall(sendme)
 
