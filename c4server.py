@@ -7,6 +7,7 @@ import datetime
 import os
 import string
 import array
+import random
 
 now = datetime.datetime.now(datetime.timezone.utc)
 date = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -29,7 +30,7 @@ print("Connection from:", addr)
 #Array Declaration with no moves made
 array = [['-','-','-','-','-','-','-'], 
         ['-','-','-','-','-','-','-'], 
-        ['-', '-', '-', '-','-','-','-'], 
+        ['-','-','-','-','-','-','-'], 
         ['-','-','-','-','-','-','-'],
         ['-','-','-','-','-','-','-']]
 #Helper function in case we need to see the server's view of the array
@@ -51,6 +52,13 @@ def sendArr():
     ArrayString = ArrayString + " 0 1 2 3 4 5 6\n"
     return ArrayString
 
+def aiTurn():
+    r = 4
+    c = random.randrange(6)
+    while array[r][c] == 'o' or array[r][c] == 'x' and r > 0:
+        r-=1
+    array[r][c] = 'x'
+
 while end == False:  
     sendme = sendArr()
     sendme = sendme.encode()
@@ -64,6 +72,8 @@ while end == False:
         while array[p][0] == 'o' or array[p][0] == 'x' and p > 0:
             p-=1
         array[p][0] = 'o'
+
+    aiTurn()
 
 conn.close()
  
