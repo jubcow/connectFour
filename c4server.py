@@ -66,12 +66,11 @@ while end == False:
 
     data = conn.recv(4096).decode() #Use conn.recv for a server, not sock.recv.
     print(data)
-    if data == '0':
-        print("If '0' statement")
-        p = 4
-        while array[p][0] == 'o' or array[p][0] == 'x' and p > 0:
-            p-=1
-        array[p][0] = 'o'
+    r = 4
+    c = int(data)
+    while array[r][c] == 'o' or array[r][c] == 'x' and r > 0:
+        r-=1
+    array[r][c] = 'o'
 
     aiTurn()
 
