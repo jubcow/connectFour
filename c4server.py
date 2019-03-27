@@ -28,7 +28,8 @@ conn,addr = sock.accept()
 print("Connection from:", addr)
 
 #Array Declaration with no moves made
-array = [['-','-','-','-','-','-','-'], 
+array = [['-','-','-','-','-','-','-'],
+        ['-','-','-','-','-','-','-'], 
         ['-','-','-','-','-','-','-'], 
         ['-','-','-','-','-','-','-'], 
         ['-','-','-','-','-','-','-'],
@@ -55,7 +56,7 @@ def sendArr():
 
 #Function for AI taking a turn, currently just random, but will want to implement an algorithm to make smarter
 def aiTurn():
-    r = 4
+    r = 5
     c = random.randrange(6)
     while array[r][c] == 'o' or array[r][c] == 'x' and r > 0: 
         r-=1
@@ -64,7 +65,7 @@ def aiTurn():
 end = False
 #Will check the board to see if the player or AI has connected 4
 def checkEnd():
-    r = 5
+    r = 6
     c = 7
     for i in range(r):
         for j in range(c):
@@ -87,7 +88,7 @@ def checkEnd():
                 sendme = sendme.encode()
                 conn.sendall(sendme)
                 quit()
-            if j < 5:
+            if j < 6:
                 if array[i][j] == 'o' and array[i-1][j+1] == 'o' and array[i-2][j+2] == 'o' and array[i-3][j+3] == 'o':
                     sendme = sendArr() + "You win! (Diag: /)\n"
                     sendme = sendme.encode()
@@ -103,7 +104,7 @@ while end == False:
 
     data = conn.recv(4096).decode() #Use conn.recv for a server, not sock.recv.
     print(data)
-    r = 4
+    r = 5
     c = int(data)
     while array[r][c] == 'o' or array[r][c] == 'x' and r > 0: # 'x' represents the AI, 'o' is player
         r-=1
