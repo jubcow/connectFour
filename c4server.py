@@ -77,23 +77,46 @@ def checkEnd():
                 sendme = sendme.encode()
                 conn.sendall(sendme)
                 quit()
-            if j > 2:    
+            elif j > 2:    
                 if array[i][j] == 'o' and array[i][j-1] == 'o'  and array[i][j-2] == 'o' and array[i][j-3] == 'o': #horizontal win, the if statement is to avoid a wrapping bug in which one could win with something like 4 5 6 0. 
                     sendme = sendArr() + "You win! (Horiz)\n"
                     sendme = sendme.encode()
                     conn.sendall(sendme)
                     quit()
-            if array[i][j] == 'o' and array[i-1][j-1] == 'o' and array[i-2][j-2] == 'o' and array[i-3][j-3] == 'o':
+            elif array[i][j] == 'o' and array[i-1][j-1] == 'o' and array[i-2][j-2] == 'o' and array[i-3][j-3] == 'o':
                 sendme = sendArr() + "You win! (Diag: \)\n"
                 sendme = sendme.encode()
                 conn.sendall(sendme)
                 quit()
-            if j < 6:
+            elif j < 6:
                 if array[i][j] == 'o' and array[i-1][j+1] == 'o' and array[i-2][j+2] == 'o' and array[i-3][j+3] == 'o':
                     sendme = sendArr() + "You win! (Diag: /)\n"
                     sendme = sendme.encode()
                     conn.sendall(sendme)
                     quit()
+            if array[i][j] == 'x' and array[i-1][j] == 'x'  and array[i-2][j] == 'x' and array[i-3][j] == 'x': #if they have a vertical connect4
+                sendme = sendArr() + "You lose. (Vert)\n"
+                sendme = sendme.encode()
+                conn.sendall(sendme)
+                quit()
+            elif j > 2:
+                if array[i][j] == 'x' and array[i][j-1] == 'x'  and array[i][j-2] == 'x' and array[i][j-3] == 'x': #horizontal win, the if statement is to avoid a wrapping bug in which one could win with something like 4 5 6 0.
+                    sendme = sendArr() + "You lose. (Horiz)\n"
+                    sendme = sendme.encode()
+                    conn.sendall(sendme)
+                    quit()
+            elif array[i][j] == 'x' and array[i-1][j-1] == 'x' and array[i-2][j-2] == 'x' and array[i-3][j-3] == 'x':
+                sendme = sendArr() + "You lose. (Diag: \)\n"
+                sendme = sendme.encode()
+                conn.sendall(sendme)
+                quit()
+            elif j < 6:
+                if array[i][j] == 'x' and array[i-1][j+1] == 'x' and array[i-2][j+2] == 'x' and array[i-3][j+3] == 'x':
+                    sendme = sendArr() + "You lose. (Diag: /)\n"
+                    sendme = sendme.encode()
+                    conn.sendall(sendme)
+                    quit()
+
 
 while end == False:  
     checkEnd() #Check if the player has won
