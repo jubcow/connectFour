@@ -59,7 +59,7 @@ def aiTurn():
     r = 5
     c = random.randrange(6)
 
-    while array[0][c] == 'o' or array[0][c] == 'x':   #if the column is full
+    while array[0][c] == 'o' or array[0][c] == 'x':   #if the column is full reassign
         c = random.randrage(6)
 
     while array[r][c] == 'o' or array[r][c] == 'x' and r > 0:            

@@ -6,6 +6,7 @@ import re
 HOST = "10.213.190.227"
 PORT = 4040
 
+#TODO Add TKinter GUI, can have buttons to send 0-6 to server and a text display for the board text.
 # create our socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
