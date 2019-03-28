@@ -17,6 +17,12 @@ while True:
     data = sock.recv(1024)
     data = data.decode()
     print(data)
-    msg = input()
+    formatted = False
+    while formatted == False:
+        msg = input()
+        if int(msg) > 6 or int(msg) < 0:
+            print("Enter a number 0-6\n")
+        else:
+            formatted = True
     send = msg.encode()
     sock.sendall(send)
