@@ -58,20 +58,25 @@ def sendArr():
 def aiTurn():
     r = 5
     c = random.randrange(6)
-    while array[r][c] == 'o' or array[r][c] == 'x' and r > 0: 
+
+    while array[0][c] == 'o' or array[0][c] == 'x':   #if the column is full
+        c = random.randrage(6)
+
+    while array[r][c] == 'o' or array[r][c] == 'x' and r > 0:            
         r-=1
     array[r][c] = 'x'
 
-end = False
 #Will check the board to see if the player or AI has connected 4
 def checkEnd():
     r = 6
     c = 7
     for i in range(r):
         for j in range(c):
-            print("Array i's: "+ str(i) +" "+ array[i][j] + array[i-1][j] + array[i-2][j] + array[i-3][j])
-            print("Array j's: "+ str(j) +" "+ array[i][j] + array[i][j-1] + array[i][j-2] + array[i][j-3]) 
+            #print("Array i's: "+ str(i) +" "+ array[i][j] + array[i-1][j] + array[i-2][j] + array[i-3][j])
+            #print("Array j's: "+ str(j) +" "+ array[i][j] + array[i][j-1] + array[i][j-2] + array[i][j-3]) 
             #print(array[i][j], end='')
+
+            #Check for Player win scenarios
             if i > 2:
                 if array[i][j] == 'o' and array[i-1][j] == 'o'  and array[i-2][j] == 'o' and array[i-3][j] == 'o': #if they have a vertical connect4
                     sendme = sendArr() + "You win! (Vert)\n"
@@ -98,7 +103,7 @@ def checkEnd():
                     quit()
 
 
-            #AI checks are below
+            #AI win checks are below
             if i > 2:        
                 if array[i][j] == 'x' and array[i-1][j] == 'x'  and array[i-2][j] == 'x' and array[i-3][j] == 'x': #if they have a vertical connect4
                     sendme = sendArr() + "You lose. (Vert)\n"
@@ -124,9 +129,30 @@ def checkEnd():
                     conn.sendall(sendme)
                     quit()
 
+#Will check the board for a Draw / Full board
+def checkDraw():
+    r = 6
+    c = 7
+    count = 0
+    maxCount = 42
+    for i in range(r):
+        for j in range(c):
+            if array[i][j] == 'o' or array[i][j] == 'x':
+                count += 1
+            j -= 1
+        i -= 1
+    #print("count: " + str(count))
+    if maxCount == 42:
+        sendme = sendArr() + "Draw!\n"
+        sendme = sendme.encode()
+        conn.sendall(sendme)
+        quit()
 
+
+end = False
 while end == False:  
     checkEnd() #Check if the player has won
+    checkDraw() 
 
     sendme = sendArr()
     sendme = sendme.encode()
