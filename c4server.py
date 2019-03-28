@@ -69,15 +69,16 @@ def checkEnd():
     c = 7
     for i in range(r):
         for j in range(c):
-            #print("Array i's: "+ str(i) + array[i][j] + array[i-1][j] + array[i-2][j] + array[i-3][j])
-            #print("Array j's: "+ str(j) + array[i][j] + array[i][j-1] + array[i][j-2] + array[i][j-3]) 
+            print("Array i's: "+ str(i) +" "+ array[i][j] + array[i-1][j] + array[i-2][j] + array[i-3][j])
+            print("Array j's: "+ str(j) +" "+ array[i][j] + array[i][j-1] + array[i][j-2] + array[i][j-3]) 
             #print(array[i][j], end='')
-            if array[i][j] == 'o' and array[i-1][j] == 'o'  and array[i-2][j] == 'o' and array[i-3][j] == 'o': #if they have a vertical connect4
-                sendme = sendArr() + "You win! (Vert)\n"
-                sendme = sendme.encode()
-                conn.sendall(sendme)
-                quit()
-            elif j > 2:    
+            if i > 3:
+                if array[i][j] == 'o' and array[i-1][j] == 'o'  and array[i-2][j] == 'o' and array[i-3][j] == 'o': #if they have a vertical connect4
+                    sendme = sendArr() + "You win! (Vert)\n"
+                    sendme = sendme.encode()
+                    conn.sendall(sendme)
+                    quit()
+            if j > 2:    
                 if array[i][j] == 'o' and array[i][j-1] == 'o'  and array[i][j-2] == 'o' and array[i][j-3] == 'o': #horizontal win, the if statement is to avoid a wrapping bug in which one could win with something like 4 5 6 0. 
                     sendme = sendArr() + "You win! (Horiz)\n"
                     sendme = sendme.encode()
@@ -94,11 +95,13 @@ def checkEnd():
                     sendme = sendme.encode()
                     conn.sendall(sendme)
                     quit()
-            if array[i][j] == 'x' and array[i-1][j] == 'x'  and array[i-2][j] == 'x' and array[i-3][j] == 'x': #if they have a vertical connect4
-                sendme = sendArr() + "You lose. (Vert)\n"
-                sendme = sendme.encode()
-                conn.sendall(sendme)
-                quit()
+
+            if i > 3:        
+                if array[i][j] == 'x' and array[i-1][j] == 'x'  and array[i-2][j] == 'x' and array[i-3][j] == 'x': #if they have a vertical connect4
+                    sendme = sendArr() + "You lose. (Vert)\n"
+                    sendme = sendme.encode()
+                    conn.sendall(sendme)
+                    quit()
             elif j > 2:
                 if array[i][j] == 'x' and array[i][j-1] == 'x'  and array[i][j-2] == 'x' and array[i][j-3] == 'x': #horizontal win, the if statement is to avoid a wrapping bug in which one could win with something like 4 5 6 0.
                     sendme = sendArr() + "You lose. (Horiz)\n"
