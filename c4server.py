@@ -37,7 +37,7 @@ def main():
                 ['-','-','-','-','-','-','-'],
                 ['-','-','-','-','-','-','-']]
 
-        sendme = sendArr() # send current board
+        sendme = sendArr(array) # send current board
         sendString(conn, sendme)
 
         end = False
@@ -53,31 +53,32 @@ def main():
             array[r][c] = 'o'
 
             #checks
-            endRes = checkEnd('o', 'You Win!') #Check if the player has won
+            endRes = checkEnd(array, 'o', 'You Win!') #Check if the player has won
             if endRes[0] == 0: # previous check was code=0 'CONTINUE'
-                endRes = checkDraw() # check for draw
+                endRes = checkDraw(array) # check for draw
             if endRes[0] == 1: # previous check was code=1 'END STATE'
                 sendString(conn, endRes[1]) # endRes[1] contains message to send
                 end == True
 
             if endRes[0] == 0: # previous check was code=0 'CONTINUE'
-                sendme = sendArr() # send current board
+                sendme = sendArr(array) # send current board
                 sendString(conn, sendme)
 
-            #AI takes turn after player
-            aiTurn()
+            if not end:
+                #AI takes turn after player
+                aiTurn(array)
 
-            # checks
-            endRes = checkEnd('x', 'You lose.') #Check if the AI has won
-            if endRes[0] == 0: # previous check was code=0 'CONTINUE'
-                endRes = checkDraw() # check for draw
-            if endRes[0] == 1: # previous check was code=1 'END STATE'
-                sendString(conn, endRes[1]) # endRes[1] contains message to send
-                end == True
+                # checks
+                endRes = checkEnd(array, 'x', 'You lose.') #Check if the AI has won
+                if endRes[0] == 0: # previous check was code=0 'CONTINUE'
+                    endRes = checkDraw(array) # check for draw
+                if endRes[0] == 1: # previous check was code=1 'END STATE'
+                    sendString(conn, endRes[1]) # endRes[1] contains message to send
+                    end == True
 
-            if endRes[0] == 0: # if any of the above returned code=1 'END STATE'
-                sendme = sendArr() # send current board
-                sendString(conn, sendme)                
+                if endRes[0] == 0: # if any of the above returned code=1 'END STATE'
+                    sendme = sendArr(array) # send current board
+                    sendString(conn, sendme)                
 
         conn.close()
 
@@ -92,14 +93,14 @@ def recString(conn):
     return conn.recv(4096).decode()
 
 #Helper function in case we need to see the server's view of the array
-def printArr():
+def printArr(array):
     for i in array:
         for j in i:
             print(j,end = " ")
         print('\n')
 
 #Function that puts the current array into a string and returns the string to be sent to the client. 
-def sendArr():
+def sendArr(array):
     ArrayString = ""
 
     for i in array:
@@ -111,7 +112,7 @@ def sendArr():
     return ArrayString
 
 #Function for AI taking a turn, currently just random, but will want to implement an algorithm to make smarter
-def aiTurn():
+def aiTurn(array):
     r = 5
     c = random.randrange(6)
 
@@ -129,7 +130,7 @@ returns a tuple (code, message)
 code=1 => enter END state
 code=0 => continue
 """
-def checkEnd(token='o', mesg='You Win!'):
+def checkEnd(array, token='o', mesg='You Win!'):
     r = 6
     c = 7
     for i in range(r):
@@ -163,7 +164,7 @@ returns a tuple (code, message)
 code=1 => enter END state
 code=0 => continue
 """
-def checkDraw():
+def checkDraw(array):
     r = 6
     c = 7
     count = 0
