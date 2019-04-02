@@ -21,7 +21,6 @@ sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 #bind host IP and port to server socket
 sock.bind((HOST, PORT))
 
-
 def main():
     while True:
         sock.listen()
@@ -40,16 +39,10 @@ def main():
 
 
         end = False
-        while end == False:  
-            endRes = checkEnd('o', 'You Win!') #Check if the player has won
-            checkEnd('x', 'You lose.') #Check if the AI has won
-            checkDraw()
+        while end == False:
 
-            sendme = sendArr()
-            sendme = sendme.encode()
-            conn.sendall(sendme)
-
-            data = conn.recv(4096).decode() #Use conn.recv for a server, not sock.recv.
+            # get player input / turn
+            data = recString(conn) #Use conn.recv for a server, not sock.recv.
             print(data)
             r = 5
             c = int(data)
@@ -57,24 +50,44 @@ def main():
                 r-=1
             array[r][c] = 'o'
 
-            #checkEnd() #Check to see if player has won
-            aiTurn() #AI takes turn afterwards
+            #checks
+            endRes = checkEnd('o', 'You Win!') #Check if the player has won
+            if endRes[0] == 0: # previous check was code=0 'CONTINUE'
+                endRes = checkDraw() # check for draw
+            if endRes[0] == 1: # previous check was code=1 'END STATE'
+                sendString(conn, endRes[1]) # endRes[1] contains message to send
+                end == True
+
+            if endRes[0] == 0: # previous check was code=0 'CONTINUE'
+                sendme = sendArr() # send current board
+                sendString(conn, sendme)
+
+            #AI takes turn after player
+            aiTurn()
+
+            # checks
+            endRes = checkEnd('x', 'You lose.') #Check if the AI has won
+            if endRes[0] == 0: # previous check was code=0 'CONTINUE'
+                endRes = checkDraw() # check for draw
+            if endRes[0] == 1: # previous check was code=1 'END STATE'
+                sendString(conn, endRes[1]) # endRes[1] contains message to send
+                end == True
+
+            if endRes[0] == 0: # if any of the above returned code=1 'END STATE'
+                sendme = sendArr() # send current board
+                sendString(conn, sendme)                
 
         conn.close()
- 
-def setEnd(end, value):
-    end = value;
 
 """
-Helpful wrappers for teh socket sending and recieving.
-sock is in the global scope 
+Helpful wrappers for the socket sending and recieving.
 """
-def sendString(string):
+def sendString(conn, string):
 #    print("sending: ",string)
-    sock.sendall(string.encode())
+    conn.sendall(string.encode())
     
-def recString():
-    return sock.recv(1024).decode()
+def recString(conn):
+    return conn.recv(4096).decode()
 
 #Helper function in case we need to see the server's view of the array
 def printArr():
@@ -101,7 +114,7 @@ def aiTurn():
     c = random.randrange(6)
 
     while array[0][c] == 'o' or array[0][c] == 'x':   #if the column is full reassign
-        c = random.randrage(6)
+        c = random.randrange(6)
 
     while array[r][c] == 'o' or array[r][c] == 'x' and r > 0:            
         r-=1
@@ -111,6 +124,8 @@ def aiTurn():
 Will check the board to see if the player or AI has connected 4
 AI: token='x' mesg='You lose.'
 returns a tuple (code, message)
+code=1 => enter END state
+code=0 => continue
 """
 def checkEnd(token='o', mesg='You Win!'):
     r = 6
@@ -132,7 +147,7 @@ def checkEnd(token='o', mesg='You Win!'):
                     return (1,sendme)
             if j > 2 and i > 2:
                 if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == token and array[i-3][j-3] == token:
-                    sendme = sendArr() + mesg + " (Diag: \)\n"
+                    sendme = sendArr() + mesg + " (Diag: \\)\n" # double backslash to escape the escape char
                     return (1,sendme)
             if i > 2 and j < 5:
                 if array[i][j] == token and array[i-1][j+1] == token and array[i-2][j+2] == token and array[i-3][j+3] == token:
@@ -140,12 +155,17 @@ def checkEnd(token='o', mesg='You Win!'):
                     return (1,sendme)
             return (0,"")
 
-#Will check the board for a Draw / Full board
+"""
+Will check the board for a Draw / Full board
+returns a tuple (code, message)
+code=1 => enter END state
+code=0 => continue
+"""
 def checkDraw():
     r = 6
     c = 7
     count = 0
-    maxCount = 42
+    maxCount = r * c # 42
     for i in range(r):
         for j in range(c):
             if array[i][j] == 'o' or array[i][j] == 'x':
@@ -153,8 +173,10 @@ def checkDraw():
             j -= 1
         i -= 1
     #print("count: " + str(count))
-    if maxCount == 42:
+    if count == maxCount:
         sendme = sendArr() + "Draw!\n"
-        sendme = sendme.encode()
-        conn.sendall(sendme)
-        quit()
+        return (1,sendme)
+    return (0,"")
+
+if __name__ == "__main__":
+    main()
