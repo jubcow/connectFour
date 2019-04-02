@@ -37,6 +37,8 @@ def main():
                 ['-','-','-','-','-','-','-'],
                 ['-','-','-','-','-','-','-']]
 
+        sendme = sendArr() # send current board
+        sendString(conn, sendme)
 
         end = False
         while end == False:
