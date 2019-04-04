@@ -2,9 +2,16 @@ import socket
 import select
 import sys
 import re
-# host (internal) IP address and port
-HOST = "35.185.114.102"
-PORT = 4040
+import json
+
+a = ""
+with open('addresses.json') as server_json:
+    a = json.load(server_json)
+    print(a)
+
+# host (external) IP address and port
+HOST = a["SERVER"]["EXTERNAL"]
+PORT = int(a["SERVER"]["PORT"])
 
 #TODO Add TKinter GUI, can have buttons to send 0-6 to server and a text display for the board text.
 # create our socket

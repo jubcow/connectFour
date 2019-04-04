@@ -8,11 +8,17 @@ import os
 import string
 import array
 import random
+import json
+
+a = ""
+with open('addresses.json') as server_json:
+    a = json.load(server_json)
+    print(a)
 
 #now = datetime.datetime.now(datetime.timezone.utc)
 #date = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
-HOST = "10.142.0.2" 
-PORT = 4040
+HOST = a["SERVER"]["INTERNAL"]
+PORT = int(a["SERVER"]["PORT"])
 
 #create socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -41,7 +47,7 @@ def main():
         sendString(conn, sendme)
 
         end = False
-        while end == False:
+        while not end:
 
             # get player input / turn
             data = recString(conn) #Use conn.recv for a server, not sock.recv.
@@ -60,9 +66,9 @@ def main():
                 sendString(conn, endRes[1]) # endRes[1] contains message to send
                 end == True
 
-            if endRes[0] == 0: # previous check was code=0 'CONTINUE'
-                sendme = sendArr(array) # send current board
-                sendString(conn, sendme)
+            # if endRes[0] == 0: # previous check was code=0 'CONTINUE'
+            #     sendme = sendArr(array) # send current board
+            #     sendString(conn, sendme)
 
             if not end:
                 #AI takes turn after player
@@ -76,9 +82,11 @@ def main():
                     sendString(conn, endRes[1]) # endRes[1] contains message to send
                     end == True
 
-                if endRes[0] == 0: # if any of the above returned code=1 'END STATE'
+                if endRes[0] == 0: # if any of the above returned code=0 'CONTINUE'
                     sendme = sendArr(array) # send current board
-                    sendString(conn, sendme)                
+                    sendString(conn, sendme)
+
+        
 
         conn.close()
 
