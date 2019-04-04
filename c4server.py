@@ -1,4 +1,11 @@
-#Connect Four client/server program (Server portion)
+#!/bin/python3
+"""
+Connect Four client/server program (Server portion)
+@author Joshus Butler
+@author John Pruchnic
+
+I hereby declare upon my word of honor that I have neither given nor received unauthorized help on this work.
+"""
 
 import socket
 import select
@@ -10,7 +17,7 @@ import array
 import random
 import json
 
-a = ""
+a = {}
 with open('addresses.json') as server_json:
     a = json.load(server_json)
     print(a)
@@ -90,27 +97,27 @@ def main():
 
         conn.close()
 
-"""
-Helpful wrappers for the socket sending and recieving.
-"""
 def sendString(conn, string):
+""" Helpful wrappers for the socket sending and recieving.
+"""
 #    print("sending: ",string)
     conn.sendall(string.encode())
     
 def recString(conn):
     return conn.recv(4096).decode()
 
-#Helper function in case we need to see the server's view of the array
 def printArr(array):
+""" Helper function in case we need to see the server's view of the array
+"""
     for i in array:
         for j in i:
             print(j,end = " ")
         print('\n')
 
-#Function that puts the current array into a string and returns the string to be sent to the client. 
 def sendArr(array):
+""" Function that puts the current array into a string and returns the string to be sent to the client. 
+"""
     ArrayString = ""
-
     for i in array:
         for j in i:
             ArrayString = ArrayString + " " + j
@@ -119,8 +126,9 @@ def sendArr(array):
     ArrayString = ArrayString + " 0 1 2 3 4 5 6\n"
     return ArrayString
 
-#Function for AI taking a turn, currently just random, but will want to implement an algorithm to make smarter
 def aiTurn(array):
+""" Function for AI taking a turn, currently just random, but will want to implement an algorithm to make smarter
+"""
     r = 5
     c = random.randrange(6)
 
@@ -131,14 +139,14 @@ def aiTurn(array):
         r-=1
     array[r][c] = 'x'
 
-"""
-Will check the board to see if the player or AI has connected 4
-AI: token='x' mesg='You lose.'
-returns a tuple (code, message)
-code=1 => enter END state
-code=0 => continue
-"""
+
 def checkEnd(array, token='o', mesg='You Win!'):
+""" Will check the board to see if the player or AI has connected 4
+    AI: token='x' mesg='You lose.'
+    returns a tuple (code, message)
+    code=1 => enter END state
+    code=0 => continue
+"""
     r = 6
     c = 7
     for i in range(r):
@@ -166,13 +174,13 @@ def checkEnd(array, token='o', mesg='You Win!'):
                     return (1,sendme)
             return (0,"")
 
-"""
-Will check the board for a Draw / Full board
-returns a tuple (code, message)
-code=1 => enter END state
-code=0 => continue
-"""
+
 def checkDraw(array):
+""" Checks the board for a Draw / Full board.
+    returns a tuple (code, message)
+    code=1 => enter END state
+    code=0 => continue
+"""
     r = 6
     c = 7
     count = 0

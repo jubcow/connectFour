@@ -1,13 +1,21 @@
+#!/bin/python3
+"""
+Connect Four client/server program (Client portion)
+@author Joshus Butler
+@author John Pruchnic
+
+I hereby declare upon my word of honor that I have neither given nor received unauthorized help on this work.
+"""
+
 import socket
 import select
 import sys
 import re
 import json
 
-a = ""
+a = {} # initialize to empty dictionary
 with open('addresses.json') as server_json:
     a = json.load(server_json)
-    print(a)
 
 # host (external) IP address and port
 HOST = a["SERVER"]["EXTERNAL"]
