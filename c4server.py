@@ -94,27 +94,27 @@ def main():
         conn.close()
 
 def sendString(conn, string):
-"""Helpful wrapper for the socket sending
-"""
-#    print("sending: ",string)
+    """Helpful wrapper for the socket sending
+    """
+    print("sending: ",string)
     conn.sendall(string.encode())
     
 def recString(conn):
-"""Helpful wrapper for the socket receiving
-"""
+    """Helpful wrapper for the socket receiving
+    """
     return conn.recv(4096).decode()
 
 def printArr(array):
-"""Helper function in case we need to see the server's view of the array
-"""
+    """Helper function in case we need to see the server's view of the array
+    """
     for i in array:
         for j in i:
             print(j,end = " ")
         print('\n')
 
 def sendArr(array):
-"""Function that puts the current array into a string and returns the string to be sent to the client. 
-"""
+    """Function that puts the current array into a string and returns the string to be sent to the client. 
+    """
     ArrayString = ""
     for i in array:
         for j in i:
@@ -125,8 +125,8 @@ def sendArr(array):
     return ArrayString
 
 def aiTurn(array):
-"""Function for AI taking a turn, currently just random, but will want to implement an algorithm to make smarter
-"""
+    """Function for AI taking a turn, currently just random, but will want to implement an algorithm to make smarter
+    """
     r = 5
     c = random.randrange(6)
 
@@ -139,12 +139,12 @@ def aiTurn(array):
 
 
 def checkEnd(array, token='o', mesg='You Win!'):
-"""Will check the board to see if the player or AI has connected 4
-    AI: token='x' mesg='You lose.'
-    returns a tuple (code, message)
-    code=1 => enter END state
-    code=0 => continue
-"""
+    """Will check the board to see if the player or AI has connected 4
+        AI: token='x' mesg='You lose.'
+        returns a tuple (code, message)
+        code=1 => enter END state
+        code=0 => continue
+    """
     r = 6
     c = 7
     for i in range(r):
@@ -174,11 +174,11 @@ def checkEnd(array, token='o', mesg='You Win!'):
 
 
 def checkDraw(array):
-"""Checks the board for a Draw / Full board.
-    returns a tuple (code, message)
-    code=1 => enter END state
-    code=0 => continue
-"""
+    """Checks the board for a Draw / Full board.
+        returns a tuple (code, message)
+        code=1 => enter END state
+        code=0 => continue
+    """
     r = 6
     c = 7
     count = 0
