@@ -27,6 +27,9 @@ with open('addresses.json') as server_json:
 HOST = a["SERVER"]["INTERNAL"]
 PORT = int(a["SERVER"]["PORT"])
 
+ROWS = 6
+COLS = 7
+
 #create socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #reuse address for restarts
@@ -118,10 +121,7 @@ def sendArr(array):
     ArrayString = ""
     for i in array:
         for j in i:
-            ArrayString = ArrayString + " " + j
-        ArrayString = ArrayString + "\n\n"
-
-    ArrayString = ArrayString + " 0 1 2 3 4 5 6\n"
+            ArrayString = ArrayString + j
     return ArrayString
 
 def aiTurn(array):
