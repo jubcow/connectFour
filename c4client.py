@@ -1,7 +1,7 @@
 #!/bin/python3
 """
 Connect Four client/server program (Client portion)
-@author Joshus Butler
+@author Joshua Butler
 @author John Pruchnic
 
 I hereby declare upon my word of honor that I have neither given nor received unauthorized help on this work.
@@ -29,7 +29,6 @@ ROWS = 6
 COLS = 7
 
 def main():
-    #TODO Add TKinter GUI, can have buttons to send 0-6 to server and a text display for the board text.
     # create our socket using with, to clean up afterwards
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         try:

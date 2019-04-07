@@ -1,7 +1,7 @@
 #!/bin/python3
 """
 Connect Four client/server program (Server portion)
-@author Joshus Butler
+@author Joshua Butler
 @author John Pruchnic
 
 I hereby declare upon my word of honor that I have neither given nor received unauthorized help on this work.
@@ -144,19 +144,44 @@ def sendArr(array, forced_mesg=""):
             ArrayString = ArrayString + j
     return ArrayString + "#" + forced_mesg
 
-def aiTurn(array):
-    """Function for AI taking a turn, currently just random, but will want to implement an algorithm to make smarter
-    """
+def aiRandomTurn(array):
     r = 5
     c = random.randrange(6)
 
     while array[0][c] == 'o' or array[0][c] == 'x':   #if the column is full reassign
         c = random.randrange(6)
 
-    while array[r][c] == 'o' or array[r][c] == 'x' and r > 0:            
+    while array[r][c] == 'o' or array[r][c] == 'x' and r > 0:
         r-=1
     array[r][c] = 'x'
 
+def aiTurn(array,token = 'x'):
+    """Function for AI taking a turn, AI will check for possible win conditions it could take"""
+    aiDone = False
+    for i in range(ROWS): 
+        for j in range(COLS): #test
+            #Check for possible wins
+            if i > 2:
+                if array[i][j] == token and array[i-1][j] == token  and array[i-2][j] == token and array[i-3][j] == '-' and aiDone == False: #vertical
+                    array[i-3][j] = 'x'
+                    aiDone = True
+            elif j > 2:    
+                if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and aiDone == False:  
+                    array[i][j-3] = 'x'
+                    aiDone = True
+            elif j > 2 and i > 2:
+                if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == token and array[i-3][j-3] == '-' and aiDone == False:
+                    array[i-3][j-3] = 'x'
+                    aiDone = True
+            elif i > 2 and j < 3:
+                if array[i][j] == token and array[i-1][j+1] == token and array[i-2][j+2] == token and array[i-3][j+3] == '-' and aiDone == False:
+                    array[i-3][j+3] = 'x'
+                    aiDone = True
+
+    """If the AI hasn't found a win condition it can take, then randomly select"""
+    if aiDone == False: 
+        aiRandomTurn(array)
+        aiDone = True
 
 def checkEnd(array, token='o', mesg='You Win!'):
     """Will check the board to see if the player or AI has connected 4
