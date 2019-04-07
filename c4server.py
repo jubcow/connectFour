@@ -16,6 +16,7 @@ import string
 import array
 import random
 import json
+from pprint import pprint as pp
 
 a = {}
 with open('addresses.json') as server_json:
@@ -38,6 +39,7 @@ sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 sock.bind((HOST, PORT))
 
 def main():
+
     while True:
         sock.listen()
 
@@ -62,9 +64,17 @@ def main():
             # get player input / turn
             data = recString(conn) #Use conn.recv for a server, not sock.recv.
             print(data)
+
+            # client side input validation
+            while not goodInput(data) or not legalMove(array, data):
+                sendme = sendArr(array, "Illegal Move")
+                sendString(conn, sendme)
+                data = recString(conn)
+                print(data)
+
             r = 5
             c = int(data)
-            while array[r][c] == 'o' or array[r][c] == 'x' and r > 0: # 'x' represents the AI, 'o' is player
+            while array[r][c] == 'o' or array[r][c] == 'x' and r > 0: # drop token 'x' represents the AI, 'o' is player
                 r-=1
             array[r][c] = 'o'
 
@@ -92,8 +102,6 @@ def main():
                     sendme = sendArr(array) # send current board
                     sendString(conn, sendme)
 
-        
-
         conn.close()
 
 def sendString(conn, string):
@@ -107,22 +115,34 @@ def recString(conn):
     """
     return conn.recv(4096).decode()
 
+def goodInput(inp): # returns boolean
+    try:
+        x = int(inp)
+    except:
+        return 0
+    if not x in range(COLS):
+        return 0
+    return 1
+
+def legalMove(array, c):
+    if array[0][int(c)] == '-':
+        return 1
+    else:
+        return 0
+
 def printArr(array):
     """Helper function in case we need to see the server's view of the array
     """
-    for i in array:
-        for j in i:
-            print(j,end = " ")
-        print('\n')
+    pprint(array)
 
-def sendArr(array):
+def sendArr(array, forced_mesg=""):
     """Function that puts the current array into a string and returns the string to be sent to the client. 
     """
     ArrayString = ""
     for i in array:
         for j in i:
             ArrayString = ArrayString + j
-    return ArrayString
+    return ArrayString + "#" + forced_mesg
 
 def aiTurn(array):
     """Function for AI taking a turn, currently just random, but will want to implement an algorithm to make smarter
@@ -145,32 +165,34 @@ def checkEnd(array, token='o', mesg='You Win!'):
         code=1 => enter END state
         code=0 => continue
     """
-    r = 6
-    c = 7
-    for i in range(r):
-        for j in range(c):
-            # print("Array i's: "+ str(i) +" "+ array[i][j] + array[i-1][j] + array[i-2][j] + array[i-3][j])
-            # print("Array j's: "+ str(j) +" "+ array[i][j] + array[i][j-1] + array[i][j-2] + array[i][j-3]) 
-            # print(array[i][j], end='')
-
+    code = 0
+    sendme = ""
+    for i in range(ROWS):
+        for j in range(COLS):
             #Check for win scenarios
             if i > 2:
                 if array[i][j] == token and array[i-1][j] == token  and array[i-2][j] == token and array[i-3][j] == token: #if they have a vertical connect4
-                    sendme = sendArr() + mesg + " (Vert)\n"
-                    return (1,sendme)
+                    sendme = sendArr(array) + mesg + " (Vert)\n"
+                    code = 1
+                    break
             if j > 2:    
                 if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == token: #horizontal win, the if statement is to avoid a wrapping bug in which one could win with something like 4 5 6 0. 
-                    sendme = sendArr() + mesg + " (Horiz)\n"
-                    return (1,sendme)
+                    sendme = sendArr(array) + mesg + " (Horiz)\n"
+                    code = 1
+                    break
             if j > 2 and i > 2:
                 if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == token and array[i-3][j-3] == token:
-                    sendme = sendArr() + mesg + " (Diag: \\)\n" # double backslash to escape the escape char
-                    return (1,sendme)
-            if i > 2 and j < 5:
+                    sendme = sendArr(array) + mesg + " (Diag: \\)\n" # double backslash to escape the escape char
+                    code = 1
+                    break
+            if i > 2 and j < 3:
                 if array[i][j] == token and array[i-1][j+1] == token and array[i-2][j+2] == token and array[i-3][j+3] == token:
-                    sendme = sendArr() + mesg + " (Diag: /)\n"
-                    return (1,sendme)
-            return (0,"")
+                    sendme = sendArr(array) + mesg + " (Diag: /)\n"
+                    code = 1
+                    break
+            if code == 1:
+                break
+    return (code, sendme)
 
 
 def checkDraw(array):
@@ -179,19 +201,17 @@ def checkDraw(array):
         code=1 => enter END state
         code=0 => continue
     """
-    r = 6
-    c = 7
     count = 0
-    maxCount = r * c # 42
-    for i in range(r):
-        for j in range(c):
+    maxCount = ROWS * COLS # 42
+    for i in range(ROWS):
+        for j in range(COLS):
             if array[i][j] == 'o' or array[i][j] == 'x':
                 count += 1
             j -= 1
         i -= 1
     #print("count: " + str(count))
     if count == maxCount:
-        sendme = sendArr() + "Draw!\n"
+        sendme = sendArr(array) + "Draw!\n"
         return (1,sendme)
     return (0,"")
 

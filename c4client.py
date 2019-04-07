@@ -28,6 +28,27 @@ PORT = int(a["SERVER"]["PORT"])
 ROWS = 6
 COLS = 7
 
+def main():
+    #TODO Add TKinter GUI, can have buttons to send 0-6 to server and a text display for the board text.
+    # create our socket using with, to clean up afterwards
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        try:
+            sock.connect((HOST,PORT))#Initial connection being made using the IP address of the server and correct port number
+            print("connected to ",HOST,":",PORT)
+        except:
+            print('Not connected\n')
+            sys.exit()
+        while True:
+            data = recString(sock);
+            print("received: " + data) # debug
+            print(makePretty(data))
+
+            msg = input(" Enter a number 0-6 : ")
+            while not goodInput(msg):
+                msg = input(" Enter a number 0-6 : ")
+                    
+            sendString(sock, msg)
+
 def makePretty(arrayStr):
     """   ___________________________
          |   |   |   |   |   |   |   |
@@ -47,11 +68,9 @@ def makePretty(arrayStr):
     """
     # deterine char and color of tokens
     ENEMY_TOKEN = tc.CBOLD + tc.CRED  + "O" + tc.CEND
-    BUDDY_TOKEN = tc.CBOLD + tc.CBLUE + "O" + tc.CEND
+    BUDDY_TOKEN = tc.CBOLD + tc.CBLUE2 + "O" + tc.CEND
 
-    print("arrayStr: "+arrayStr)
-
-    # generate pretty board around data of variables COLS and ROWS
+    # generate pretty board around data of dimensions COLS and ROWS
     top     = "  " + (COLS-1)*"____" + "___ \n"
     divider = " |" + COLS*"---|" + "\n"
     bottom  = " _" + COLS*"____" + "\n"
@@ -59,22 +78,33 @@ def makePretty(arrayStr):
     array = [ ''.join([" | " + str(arrayStr[COLS*j + i]) for i in range(COLS)]) + " | \n" for j in range(ROWS)]
     prettyStr = top + divider.join(array) + divider + bottom + numbers
 
-    # subsitute known chars with pretty colorized versions
+    # subsitute known tokens with pretty colorized versions
     prettyStr = prettyStr.replace(' - ', '   ')
     prettyStr = prettyStr.replace('x', ENEMY_TOKEN)
     prettyStr = prettyStr.replace('o', BUDDY_TOKEN)
 
-    return prettyStr
+    message = arrayStr.split("#")[1]
+    if not message == "":
+        message = "\n   " + tc.CBOLD + tc.CGREEN + message + tc.CEND
 
-def sanitizeInp(inp):
-    None
+    return prettyStr + message
+
+def goodInput(inp): # returns boolean
+    try:
+        x = int(inp)
+    except:
+        return 0
+    if not x in range(COLS):
+        return 0
+    return 1
 
 class tc:
     """text color
-        extended ascii color codes. used to color the coins
+        extended ascii color codes. used to color the tokens
         gathered from stackoverflow answers:
         https://stackoverflow.com/questions/287871/print-in-terminal-with-colors
     """
+    #TODO remove unused color codes (wait till done)
     CEND      = '\33[0m'
     CBOLD     = '\33[1m'
     
@@ -114,27 +144,17 @@ class tc:
     CBEIGEBG2  = '\33[106m'
     CWHITEBG2  = '\33[107m'
 
+def sendString(sock, string):
+    """Helpful wrappers for the socket sending
+        sock is in the global scope 
+    """
+    sock.sendall(string.encode())
+    
+def recString(sock):
+    """Helpful wrappers for the socket recieving.
+        sock is in the global scope 
+    """
+    return sock.recv(4096).decode()
 
-
-#TODO Add TKinter GUI, can have buttons to send 0-6 to server and a text display for the board text.
-# create our socket using with, to clean up afterwards
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-	try:
-	    sock.connect((HOST,PORT))#Initial connection being made using the IP address of the server and correct port number
-	    print("connected to ",HOST,":",PORT)
-	except:
-	    print('Not connected\n')
-	    sys.exit()
-	while True:
-	    data = sock.recv(1024)
-	    data = data.decode()
-	    print(makePretty(data))
-	    formatted = False
-	    while formatted == False:
-	        msg = input("Enter a number 0-6\n")
-	        if not (int(msg) > 6 or int(msg) < 0):
-	            formatted = True
-	            
-	    send = msg.encode()
-	    sock.sendall(send)
-
+if __name__ == "__main__":
+    main()
