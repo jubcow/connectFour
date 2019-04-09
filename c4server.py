@@ -16,7 +16,7 @@ import string
 import array
 import random
 import json
-from pprint import pprint as pp
+from pprint import pprint
 
 a = {}
 with open('addresses.json') as server_json:
@@ -44,65 +44,74 @@ def main():
         sock.listen()
 
         end = False;
-        conn,addr = sock.accept()
-        print("Connection from:", addr)
+        try:
+            conn,addr = sock.accept()
+            print("Connection from:", addr)
 
-        #Array Declaration with no moves made
-        array = [['-','-','-','-','-','-','-'],
-                ['-','-','-','-','-','-','-'], 
-                ['-','-','-','-','-','-','-'], 
-                ['-','-','-','-','-','-','-'], 
-                ['-','-','-','-','-','-','-'],
-                ['-','-','-','-','-','-','-']]
+            #Array Declaration with no moves made
+            array = [['-','-','-','-','-','-','-'],
+                    ['-','-','-','-','-','-','-'], 
+                    ['-','-','-','-','-','-','-'], 
+                    ['-','-','-','-','-','-','-'], 
+                    ['-','-','-','-','-','-','-'],
+                    ['-','-','-','-','-','-','-']]
 
-        sendme = sendArr(array) # send current board
-        sendString(conn, sendme)
+            sendme = sendArr(array) # send current board
+            sendString(conn, sendme)
 
-        end = False
-        while not end:
+            end = False
+            while not end:
 
-            # get player input / turn
-            data = recString(conn) #Use conn.recv for a server, not sock.recv.
-            print(data)
-
-            # client side input validation
-            while not goodInput(data) or not legalMove(array, data):
-                sendme = sendArr(array, "Illegal Move")
-                sendString(conn, sendme)
-                data = recString(conn)
+                # get player input / turn
+                data = recString(conn) #Use conn.recv for a server, not sock.recv.
                 print(data)
 
-            r = 5
-            c = int(data)
-            while array[r][c] == 'o' or array[r][c] == 'x' and r > 0: # drop token 'x' represents the AI, 'o' is player
-                r-=1
-            array[r][c] = 'o'
+                # client side input validation
+                while not goodInput(data) or not legalMove(array, data):
+                    try:
+                        sendme = sendArr(array, "Illegal Move")
+                        sendString(conn, sendme)
+                        data = recString(conn)
+                        print(data)
+                    except BrokenPipeError:
+                        end = True
+                        break
 
-            #checks
-            endRes = checkEnd(array, 'o', 'You Win!') #Check if the player has won
-            if endRes[0] == 0: # previous check was code=0 'CONTINUE'
-                endRes = checkDraw(array) # check for draw
-            if endRes[0] == 1: # previous check was code=1 'END STATE'
-                sendString(conn, endRes[1]) # endRes[1] contains message to send
-                end == True
+                if not end:
+                    r = 5
+                    c = int(data)
+                    while array[r][c] == 'o' or array[r][c] == 'x' and r > 0: # drop token 'x' represents the AI, 'o' is player
+                        r-=1
+                    array[r][c] = 'o'
 
-            if not end:
-                #AI takes turn after player
-                aiTurn(array)
+                    #checks
+                    endRes = checkEnd(array, 'o', 'You Win!') #Check if the player has won
+                    if endRes[0] == 0: # previous check was code=0 'CONTINUE'
+                        endRes = checkDraw(array) # check for draw
+                    if endRes[0] == 1: # previous check was code=1 'END STATE'
+                        sendString(conn, endRes[1]) # endRes[1] contains message to send
+                        end = True
 
-                # checks
-                endRes = checkEnd(array, 'x', 'You lose.') #Check if the AI has won
-                if endRes[0] == 0: # previous check was code=0 'CONTINUE'
-                    endRes = checkDraw(array) # check for draw
-                if endRes[0] == 1: # previous check was code=1 'END STATE'
-                    sendString(conn, endRes[1]) # endRes[1] contains message to send
-                    end == True
+                    if not end:
+                        #AI takes turn after player
+                        aiTurn(array)
 
-                if endRes[0] == 0: # if any of the above returned code=0 'CONTINUE'
-                    sendme = sendArr(array) # send current board
-                    sendString(conn, sendme)
+                        # checks
+                        endRes = checkEnd(array, 'x', 'You lose.') #Check if the AI has won
+                        if endRes[0] == 0: # previous check was code=0 'CONTINUE'
+                            endRes = checkDraw(array) # check for draw
+                        if endRes[0] == 1: # previous check was code=1 'END STATE'
+                            sendString(conn, endRes[1]) # endRes[1] contains message to send
+                            end = True
 
-        conn.close()
+                        if endRes[0] == 0: # if any of the above returned code=0 'CONTINUE'
+                            sendme = sendArr(array) # send current board
+                            sendString(conn, sendme)
+
+            conn.close()
+            print("Connection Closed")
+        except OSError:
+            pass
 
 def sendString(conn, string):
     """Helpful wrapper for the socket sending

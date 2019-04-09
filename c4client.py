@@ -15,11 +15,11 @@ import json
 
 a = {} # initialize to empty dictionary
 try:
-	with open('addresses.json') as server_json:
-	    a = json.load(server_json)
+    with open('addresses.json') as server_json:
+        a = json.load(server_json)
 except FileNotFoundError:
-	print("file not found!")
-	sys.exit()
+    print("file not found!")
+    sys.exit()
 
 # host (external) IP address and port
 HOST = a["SERVER"]["EXTERNAL"]
@@ -27,6 +27,8 @@ PORT = int(a["SERVER"]["PORT"])
 
 ROWS = 6
 COLS = 7
+
+END_GAME = False
 
 def main():
     # create our socket using with, to clean up afterwards
@@ -37,19 +39,20 @@ def main():
         except:
             print('Not connected\n')
             sys.exit()
-        while True:
+        while not END_GAME:
             data = recString(sock);
             print("received: " + data) # debug
             print(makePretty(data))
-
-            msg = input(" Enter a number 0-6 : ")
-            while not goodInput(msg):
+            if not END_GAME:
                 msg = input(" Enter a number 0-6 : ")
+                while not goodInput(msg):
+                    msg = input(" Enter a number 0-6 : ")
                     
-            sendString(sock, msg)
+                sendString(sock, msg)
 
 def makePretty(arrayStr):
-    """   ___________________________
+    """Build a pretty representation of the current layout 
+          ___________________________
          |   |   |   |   |   |   |   |
          |---|---|---|---|---|---|---|
          |   |   |   |   |   |   |   |
@@ -65,9 +68,10 @@ def makePretty(arrayStr):
 
          !!! BEHOLD INSANITY BELOW !!!
     """
+    global END_GAME
     # deterine char and color of tokens
-    ENEMY_TOKEN = tc.CBOLD + tc.CRED  + "O" + tc.CEND
-    BUDDY_TOKEN = tc.CBOLD + tc.CBLUE2 + "O" + tc.CEND
+    ENEMY_TOKEN = tc.CEND + tc.CBOLD + tc.CRED  + "O" + tc.CEND + tc.CBLUE 
+    BUDDY_TOKEN = tc.CEND + tc.CBOLD + tc.CBLUE2 + "O" + tc.CEND + tc.CBLUE 
 
     # generate pretty board around data of dimensions COLS and ROWS
     top     = "  " + (COLS-1)*"____" + "___ \n"
@@ -75,7 +79,7 @@ def makePretty(arrayStr):
     bottom  = " _" + COLS*"____" + "\n"
     numbers = " |" + ''.join([" "+str(x)+" |" for x in range(COLS)]) + "\n"
     array = [ ''.join([" | " + str(arrayStr[COLS*j + i]) for i in range(COLS)]) + " | \n" for j in range(ROWS)]
-    prettyStr = top + divider.join(array) + divider + bottom + numbers
+    prettyStr = tc.CBLUE + top + divider.join(array) + divider + tc.CEND + tc.CBOLD + tc.CBLUE + bottom + numbers + tc.CEND
 
     # subsitute known tokens with pretty colorized versions
     prettyStr = prettyStr.replace(' - ', '   ')
@@ -84,7 +88,14 @@ def makePretty(arrayStr):
 
     message = arrayStr.split("#")[1]
     if not message == "":
-        message = "\n   " + tc.CBOLD + tc.CGREEN + message + tc.CEND
+        if "win" in message.lower():
+            END_GAME = True
+            message = "\n   " + tc.CBOLD + tc.CGREEN + message + tc.CEND
+        elif "lose" in message.lower():
+            END_GAME = True
+            message = "\n   " + tc.CBOLD + tc.CRED + message + tc.CEND
+        else:
+            message = "\n   " + tc.CBOLD + tc.CYELLOW + message + tc.CEND
 
     return prettyStr + message
 
