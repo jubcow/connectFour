@@ -8,15 +8,10 @@ I hereby declare upon my word of honor that I have neither given nor received un
 """
 
 import socket
-import select
-import sys
-import datetime
-import os
-import string
-import array
 import random
 import json
 from pprint import pprint
+import threading
 
 a = {}
 with open('addresses.json') as server_json:
@@ -39,84 +34,100 @@ sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 sock.bind((HOST, PORT))
 
 def main():
-
+    threadCount = 0
     while True:
         sock.listen()
+        print("threads alive:",threading.active_count())
+        conn,addr = sock.accept()
+        gameT = gameThread(threadCount, conn, addr)
+        gameT.start()
+        threadCount += 1
+        
+    
+class gameThread(threading.Thread):
+    def __init__(self, threadID, conn, addr):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.conn = conn
+        self.addr = addr
+    def run(self):
+        print("Starting game thread id: ",self.threadID," with ",self.addr)
+        playGame(self.conn, self.addr, self.threadID)
+        return self.threadID
+        
 
-        end = False;
-        try:
-            conn,addr = sock.accept()
-            print("Connection from:", addr)
+def playGame(conn, addr, threadID):
+    
+    try:
+        #Array Declaration with no moves made
+        array = [['-','-','-','-','-','-','-'],
+                ['-','-','-','-','-','-','-'], 
+                ['-','-','-','-','-','-','-'], 
+                ['-','-','-','-','-','-','-'], 
+                ['-','-','-','-','-','-','-'],
+                ['-','-','-','-','-','-','-']]
 
-            #Array Declaration with no moves made
-            array = [['-','-','-','-','-','-','-'],
-                    ['-','-','-','-','-','-','-'], 
-                    ['-','-','-','-','-','-','-'], 
-                    ['-','-','-','-','-','-','-'], 
-                    ['-','-','-','-','-','-','-'],
-                    ['-','-','-','-','-','-','-']]
+        sendme = sendArr(array) # send current board
+        sendString(threadID, conn, sendme)
 
-            sendme = sendArr(array) # send current board
-            sendString(conn, sendme)
+        end = False
+        while not end:
 
-            end = False
-            while not end:
+            # get player input / turn
+            data = recString(conn) #Use conn.recv for a server, not sock.recv.
+            print("ThreadID:",threadID,"received:",data)
 
-                # get player input / turn
-                data = recString(conn) #Use conn.recv for a server, not sock.recv.
-                print(data)
+            # client side input validation
+            while not goodInput(data) or not legalMove(array, data):
+                try:
+                    sendme = sendArr(array, "Illegal Move")
+                    sendString(threadID, conn, sendme)
+                    data = recString(conn)
+                    print("ThreadID:",threadID,"received:",data)
+                except BrokenPipeError:
+                    end = True
+                    break
 
-                # client side input validation
-                while not goodInput(data) or not legalMove(array, data):
-                    try:
-                        sendme = sendArr(array, "Illegal Move")
-                        sendString(conn, sendme)
-                        data = recString(conn)
-                        print(data)
-                    except BrokenPipeError:
-                        end = True
-                        break
+            if not end:
+                r = 5
+                c = int(data)
+                while array[r][c] == 'o' or array[r][c] == 'x' and r > 0: # drop token 'x' represents the AI, 'o' is player
+                    r-=1
+                array[r][c] = 'o'
+
+                #checks
+                endRes = checkEnd(array, 'o', 'You Win!') #Check if the player has won
+                if endRes[0] == 0: # previous check was code=0 'CONTINUE'
+                    endRes = checkDraw(array) # check for draw
+                if endRes[0] == 1: # previous check was code=1 'END STATE'
+                    sendString(threadID, conn, endRes[1]) # endRes[1] contains message to send
+                    end = True
 
                 if not end:
-                    r = 5
-                    c = int(data)
-                    while array[r][c] == 'o' or array[r][c] == 'x' and r > 0: # drop token 'x' represents the AI, 'o' is player
-                        r-=1
-                    array[r][c] = 'o'
+                    #AI takes turn after player
+                    aiTurn(array)
 
-                    #checks
-                    endRes = checkEnd(array, 'o', 'You Win!') #Check if the player has won
+                    # checks
+                    endRes = checkEnd(array, 'x', 'You lose.') #Check if the AI has won
                     if endRes[0] == 0: # previous check was code=0 'CONTINUE'
                         endRes = checkDraw(array) # check for draw
                     if endRes[0] == 1: # previous check was code=1 'END STATE'
-                        sendString(conn, endRes[1]) # endRes[1] contains message to send
+                        sendString(threadID, conn, endRes[1]) # endRes[1] contains message to send
                         end = True
 
-                    if not end:
-                        #AI takes turn after player
-                        aiTurn(array)
+                    if endRes[0] == 0: # if any of the above returned code=0 'CONTINUE'
+                        sendme = sendArr(array) # send current board
+                        sendString(threadID, conn, sendme)
 
-                        # checks
-                        endRes = checkEnd(array, 'x', 'You lose.') #Check if the AI has won
-                        if endRes[0] == 0: # previous check was code=0 'CONTINUE'
-                            endRes = checkDraw(array) # check for draw
-                        if endRes[0] == 1: # previous check was code=1 'END STATE'
-                            sendString(conn, endRes[1]) # endRes[1] contains message to send
-                            end = True
+        conn.close()
+        print("Connection to" ,addr,"Closed")
+    except OSError:
+        pass
 
-                        if endRes[0] == 0: # if any of the above returned code=0 'CONTINUE'
-                            sendme = sendArr(array) # send current board
-                            sendString(conn, sendme)
-
-            conn.close()
-            print("Connection Closed")
-        except OSError:
-            pass
-
-def sendString(conn, string):
+def sendString(threadID, conn, string):
     """Helpful wrapper for the socket sending
     """
-    print("sending: ",string)
+    print("ThreadID:",threadID,"sending:",string)
     conn.sendall(string.encode())
     
 def recString(conn):
