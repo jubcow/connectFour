@@ -178,8 +178,53 @@ def aiRandomTurn(array):
 def aiTurn(array,token = 'x'):
     """Function for AI taking a turn, AI will check for possible win conditions it could take"""
     aiDone = False
+
+
+    for i in range(ROWS):
+        for j in range(COLS):
+            #Check for possible player wins and block
+            if i > 2:
+                if array[i][j] == 'o' and array[i-1][j] == 'o'  and array[i-2][j] == 'o' and array[i-3][j] == '-' and aiDone == False: #vertical
+                    array[i-3][j] = 'x'
+                    aiDone = True
+            elif j > 2:
+                if array[i][j] == 'o' and array[i][j-1] == 'o'  and array[i][j-2] == 'o' and array[i][j-3] == '-' and aiDone == False:
+                    array[i][j-3] = 'x'
+                    aiDone = True
+            elif j > 2 and i > 2:
+                if array[i][j] == 'o' and array[i-1][j-1] == 'o' and array[i-2][j-2] == 'o' and array[i-3][j-3] == '-' and aiDone == False:
+                    array[i-3][j-3] = 'x'
+                    aiDone = True
+            elif i > 2 and j < 3:
+                if array[i][j] == 'o' and array[i-1][j+1] == 'o' and array[i-2][j+2] == 'o' and array[i-3][j+3] == '-' and aiDone == False:
+                    array[i-3][j+3] = 'x'
+                    aiDone = True
+
+
+
+    for i in range(ROWS):
+        for j in range(COLS):
+            #Check for possible short lines
+            if i > 1:
+                if array[i][j] == token and array[i-1][j] == token and array[i-2][j] == '-' and aiDone == False: #vertical
+                    array[i-2][j] = 'x'
+                    aiDone = True
+            elif j > 1:
+                if array[i][j] == token and array[i][j-1] == token and array[i][j-2] == '-' and aiDone == False:
+                    array[i][j-2] = 'x'
+                    aiDone = True
+            elif j > 1 and i > 1:
+                if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == '-' and aiDone == False:
+                    array[i-2][j-2] = 'x'
+                    aiDone = True
+            elif i > 1 and j < 2:
+                if array[i][j] == token and array[i-1][j+1] == token and array[i-2][j+2] == '-' and aiDone == False:
+                    array[i-2][j+2] = 'x'
+                    aiDone = True
+
     for i in range(ROWS): 
-        for j in range(COLS): #test
+        for j in range(COLS): 
+            #print(array[i][j] + " " + array + " " + array[i][j-1] + " " + array[i][j-2])
             #Check for possible wins
             if i > 2:
                 if array[i][j] == token and array[i-1][j] == token  and array[i-2][j] == token and array[i-3][j] == '-' and aiDone == False: #vertical
@@ -199,7 +244,8 @@ def aiTurn(array,token = 'x'):
                     aiDone = True
 
     """If the AI hasn't found a win condition it can take, then randomly select"""
-    if aiDone == False: 
+    if aiDone == False:
+        print("\nELSE\n");
         aiRandomTurn(array)
         aiDone = True
 
