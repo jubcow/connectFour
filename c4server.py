@@ -217,7 +217,7 @@ def aiTurn(array,token = 'x'):
                     array[i][j-3] = 'x'
                     print("Horiz win")
                     aiDone = True
-            if j > 2 and i > 2:
+            """if j > 2 and i > 2:
                 if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == token and array[i-3][j-3] == '-' and array[i-3][j-2] != '-' and aiDone == False:
                     array[i-3][j-3] = 'x'
                     print("Diag win")
@@ -226,7 +226,7 @@ def aiTurn(array,token = 'x'):
                 if array[i][j] == token and array[i-1][j+1] == token and array[i-2][j+2] == token and array[i-3][j+3] == '-' and array[i-3][j+4] != '-' and aiDone == False:
                     array[i-3][j+3] = 'x'
                     print("Diag win2")
-                    aiDone = True
+                    aiDone = True"""
 
     for i in range(ROWS):
         for j in range(COLS):
@@ -241,7 +241,7 @@ def aiTurn(array,token = 'x'):
                     array[i][j-2] = 'x'
                     aiDone = True
                     print("Short horiz")
-            if j > 1 and i > 1:
+            """if j > 1 and i > 1:
                 if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == '-' and array[i-2][j-1] != '-' and aiDone == False:
                     array[i-2][j-2] = 'x'
                     aiDone = True
@@ -250,7 +250,7 @@ def aiTurn(array,token = 'x'):
                 if array[i][j] == token and array[i-1][j+1] == token and array[i-2][j+2] == '-' and array[i-2][j+3] != '-' and aiDone == False:
                     array[i-2][j+2] = 'x'
                     aiDone = True
-                    print("Short diag2")
+                    print("Short diag2")"""
 
     #If the AI hasn't found a win condition it can take, then randomly select
     if aiDone == False:
