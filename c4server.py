@@ -234,7 +234,7 @@ def aiTurn(threadID, array,token = 'x'):
                     array[i-3][j-3] = 'x'
                     aiDone = True
                     print("ThreadID:",threadID," AI move: Diag Block")
-            if i > 2 and j < 3:
+            if i > 2 and j < 4:
                 if array[i][j] == 'o' and array[i-1][j+1] == 'o' and array[i-2][j+2] == 'o' and array[i-3][j+3] != 'o' and array[i-3][j+3] != 'x' and array[i-2][j+3] != '-' and aiDone == False:
                     array[i-3][j+3] = 'x'
                     aiDone = True
@@ -338,7 +338,7 @@ def checkEnd(array, token='o', mesg='You Win!'):
                     sendme = sendArr(array) + mesg + " (Diag: \\)\n" # double backslash to escape the escape char
                     code = 1
                     break
-            if i > 2 and j < 3:
+            if i > 2 and j < 4:
                 if array[i][j] == token and array[i-1][j+1] == token and array[i-2][j+2] == token and array[i-3][j+3] == token:
                     sendme = sendArr(array) + mesg + " (Diag: /)\n"
                     code = 1
