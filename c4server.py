@@ -257,7 +257,12 @@ def aiTurn(threadID, array,token = 'x'):
             if j > 2 and i < ROWS-1:
                 if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and array[i+1][j-3] != '-' and aiDone == False:
                     array[i][j-3] = 'x'
-                    print("ThreadID:",threadID," AI move: Horiz win")
+                    print("ThreadID:",threadID," AI move: Horiz win 1")
+                    aiDone = True
+            if j < 4 and i < ROWS-1:
+                if array[i][j] == token and array[i][j+1] == token  and array[i][j+2] == token and array[i][j+3] == '-' and array[i+1][j+3] != '-' and aiDone == False:
+                    array[i][j+3] = 'x'
+                    print("ThreadID:",threadID," AI move: Horiz win 2")
                     aiDone = True
             if j > 2 and i > 2:
                 if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == token and array[i-3][j-3] == '-' and array[i-2][j-3] != '-' and aiDone == False:
