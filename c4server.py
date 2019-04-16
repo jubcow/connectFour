@@ -119,7 +119,7 @@ def playGame(conn, addr, threadID):
 
                 if not end:
                     #AI takes turn after player
-                    aiTurn(array)
+                    aiTurn(threadID, array)
 
                     # checks
                     endRes = checkEnd(array, 'x', 'You lose.') #Check if the AI has won
@@ -189,7 +189,7 @@ def aiRandomTurn(array):
         r-=1
     array[r][c] = 'x'
 
-def aiTurn(array,token = 'x'):
+def aiTurn(threadID, array,token = 'x'):
     """Function for AI taking a turn, AI will check for possible win conditions it could take"""
     aiDone = False
 
@@ -200,27 +200,27 @@ def aiTurn(array,token = 'x'):
                 if array[i][j] == 'o' and array[i-1][j] == 'o'  and array[i-2][j] == 'o' and array[i-3][j] != 'o' and array[i-3][j] != 'x' and aiDone == False: #vertical
                     array[i-3][j] = 'x'
                     aiDone = True
-                    print("Vertical block")
+                    print("ThreadID:",threadID," AI move: Vertical block")
             if j > 2:
                 if array[i][j] == 'o' and array[i][j-1] == 'o'  and array[i][j-2] == 'o' and array[i][j-3] != 'o' and array[i][j-3] != 'x' and array[i+1][j-3] != '-' and aiDone == False:
                     array[i][j-3] = 'x'
                     aiDone = True
-                    print("Horizontal Block Left")
+                    print("ThreadID:",threadID," AI move: Horizontal Block Left")
             if j < 4:
                 if array[i][j] == 'o' and array[i][j+1] == 'o'  and array[i][j+2] == 'o' and array[i][j+3] != 'o' and array[i][j+3] != 'x' and array[i+1][j+3] != '-' and aiDone == False:
                     array[i][j+3] = 'x'
                     aiDone = True
-                    print("Horizontal Block Right")
+                    print("ThreadID:",threadID," AI move: Horizontal Block Right")
             if j > 2 and i > 2:
                 if array[i][j] == 'o' and array[i-1][j-1] == 'o' and array[i-2][j-2] == 'o' and array[i-3][j-3] != 'o' and array[i-3][j-3] != 'x' and array[i-2][j-3] != '-' and aiDone == False:
                     array[i-3][j-3] = 'x'
                     aiDone = True
-                    print("Diag Block")
+                    print("ThreadID:",threadID," AI move: Diag Block")
             if i > 2 and j < 3:
                 if array[i][j] == 'o' and array[i-1][j+1] == 'o' and array[i-2][j+2] == 'o' and array[i-3][j+3] != 'o' and array[i-3][j+3] != 'x' and array[i-2][j+3] != '-' and aiDone == False:
                     array[i-3][j+3] = 'x'
                     aiDone = True
-                    print("Diag Block2")
+                    print("ThreadID:",threadID," AI move: Diag Block2")
     
     for i in range(ROWS):
         for j in range(COLS):
@@ -229,22 +229,22 @@ def aiTurn(array,token = 'x'):
             if i > 2:
                 if array[i][j] == token and array[i-1][j] == token  and array[i-2][j] == token and array[i-3][j] == '-' and aiDone == False: #vertical
                     array[i-3][j] = 'x'
-                    print("Vert win")
+                    print("ThreadID:",threadID," AI move: Vert win")
                     aiDone = True
-            if j > 2:
+            if j > 2 and i < ROWS-1:
                 if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and array[i+1][j-3] != '-' and aiDone == False:
                     array[i][j-3] = 'x'
-                    print("Horiz win")
+                    print("ThreadID:",threadID," AI move: Horiz win")
                     aiDone = True
             if j > 2 and i > 2:
                 if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == token and array[i-3][j-3] == '-' and array[i-2][j-3] != '-' and aiDone == False:
                     array[i-3][j-3] = 'x'
-                    print("Diag win")
+                    print("ThreadID:",threadID," AI move: Diag win")
                     aiDone = True
             if i > 2 and j < 3:
                 if array[i][j] == token and array[i-1][j+1] == token and array[i-2][j+2] == token and array[i-3][j+3] == '-' and array[i-2][j+3] != '-' and aiDone == False:
                     array[i-3][j+3] = 'x'
-                    print("Diag win2")
+                    print("ThreadID:",threadID," AI move: Diag win2")
                     aiDone = True
 
     for i in range(ROWS):
@@ -254,12 +254,12 @@ def aiTurn(array,token = 'x'):
                 if array[i][j] == token and array[i-1][j] == token and array[i-2][j] == '-' and aiDone == False: #vertical
                     array[i-2][j] = 'x'
                     aiDone = True
-                    print("Short vert")
-            if j > 1:
+                    print("ThreadID:",threadID," AI move: Short vert")
+            if j > 1 and i < ROWS-1:
                 if array[i][j] == token and array[i][j-1] == token and array[i][j-2] == '-' and array[i+1][j-2] != '-' and aiDone == False:
                     array[i][j-2] = 'x'
                     aiDone = True
-                    print("Short horiz")
+                    print("ThreadID:",threadID," AI move: Short horiz")
             """if j > 1 and i > 1:
                 if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == '-' and array[i-2][j-1] != '-' and aiDone == False:
                     array[i-2][j-2] = 'x'
@@ -273,7 +273,7 @@ def aiTurn(array,token = 'x'):
 
     #If the AI hasn't found a win condition it can take, then randomly select
     if aiDone == False:
-        print("\nELSE\n");
+        print("ThreadID:",threadID," AI move: CHOOSING RANDOMLY");
         aiRandomTurn(array)
         aiDone = True
 

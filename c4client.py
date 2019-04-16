@@ -50,7 +50,7 @@ def main():
             sys.exit()
         while not END_GAME:
             data = recString(sock);
-            print("received: " + data) # debug
+            # print("received: " + data) # debug
             print(makePretty(data))
             if not END_GAME:
                 msg = input(" Enter a number 0-6 : ")
