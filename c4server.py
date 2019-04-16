@@ -10,13 +10,18 @@ I hereby declare upon my word of honor that I have neither given nor received un
 import socket
 import random
 import json
+import sys
 from pprint import pprint
 import threading
 
 a = {}
-with open('addresses.json') as server_json:
-    a = json.load(server_json)
-    print(a)
+try:
+    with open('addresses.json') as server_json:
+        a = json.load(server_json)
+        print(a)
+except FileNotFoundError:
+    print("Can't find 'addresses.json' - this must contain your IP information!")
+    sys.exit()
 
 #now = datetime.datetime.now(datetime.timezone.utc)
 #date = now.strftime("%a, %d %b %Y %H:%M:%S GMT")
