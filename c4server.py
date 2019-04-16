@@ -201,22 +201,22 @@ def aiTurn(array,token = 'x'):
                     array[i-3][j] = 'x'
                     aiDone = True
                     print("Vertical block")
-            if j > 2 and i < 7:
+            if j > 2 and i < 6:
                 if array[i][j] == 'o' and array[i][j-1] == 'o'  and array[i][j-2] == 'o' and array[i][j-3] != 'o' and array[i][j-3] != 'x' and array[i+1][j-3] != '-' and aiDone == False:
                     array[i][j-3] = 'x'
                     aiDone = True
                     print("Horizontal Block Left")
-            if j > 2 and i == 7:                 
+            if j > 2 and i == 6:                 
                 if array[i][j] == 'o' and array[i][j-1] == 'o'  and array[i][j-2] == 'o' and array[i][j-3] != 'o' and array[i][j-3] != 'x' and aiDone == False:
                     array[i][j-3] = 'x'
                     aiDone = True
                     print("Horizontal Block Left Bottom Row")
-            if j < 4 and i < 7:
+            if j < 4 and i < 6:
                 if array[i][j] == 'o' and array[i][j+1] == 'o'  and array[i][j+2] == 'o' and array[i][j+3] != 'o' and array[i][j+3] != 'x' and array[i+1][j+3] != '-' and aiDone == False:
                     array[i][j+3] = 'x'
                     aiDone = True
                     print("Horizontal Block Right")
-            if j < 4 and i == 7:
+            if j < 4 and i == 6:
                 if array[i][j] == 'o' and array[i][j+1] == 'o'  and array[i][j+2] == 'o' and array[i][j+3] != 'o' and array[i][j+3] != 'x' and aiDone == False:
                     array[i][j+3] = 'x'
                     aiDone = True
@@ -241,12 +241,12 @@ def aiTurn(array,token = 'x'):
                     array[i-3][j] = 'x'
                     print("Vert win")
                     aiDone = True
-            if j > 2 and i == 7:
+            if j > 2 and i == 6:
                 if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and aiDone == False:
                     array[i][j-3] = 'x'
                     print("Horiz win Bottom row")
                     aiDone = True
-            if j > 2 and i < 7:
+            if j > 2 and i < 6:
                 if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and array[i+1][j-3] != '-' and aiDone == False:
                     array[i][j-3] = 'x'
                     print("Horiz win")
@@ -269,12 +269,12 @@ def aiTurn(array,token = 'x'):
                     array[i-2][j] = 'x'
                     aiDone = True
                     print("Short vert")
-            if j > 1 and i == 7:
+            if j > 1 and i == 6:
                 if array[i][j] == token and array[i][j-1] == token and array[i][j-2] == '-' and aiDone == False:
                     array[i][j-2] = 'x'
                     aiDone = True
                     print("Short horiz Bottom row")
-            if j > 1 and i < 7:
+            if j > 1 and i < 6:
                 if array[i][j] == token and array[i][j-1] == token and array[i][j-2] == '-' and array[i+1][j-2] != '-' and aiDone == False:
                     array[i][j-2] = 'x'
                     aiDone = True
