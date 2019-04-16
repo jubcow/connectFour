@@ -244,7 +244,7 @@ def aiTurn(threadID, array,token = 'x'):
             if j > 2 and i == 6:
                 if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and aiDone == False:
                     array[i][j-3] = 'x'
-                    print("Horiz win Bottom row")
+                    print("ThreadID:",threadID," AI move: Horiz win Bottom row")
                     aiDone = True
             if j > 2 and i < 6:
                 if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and array[i+1][j-3] != '-' and aiDone == False:
