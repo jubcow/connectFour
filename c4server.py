@@ -201,16 +201,26 @@ def aiTurn(threadID, array,token = 'x'):
                     array[i-3][j] = 'x'
                     aiDone = True
                     print("ThreadID:",threadID," AI move: Vertical block")
-            if j > 2:
+            if j > 2 and i < 6:
                 if array[i][j] == 'o' and array[i][j-1] == 'o'  and array[i][j-2] == 'o' and array[i][j-3] != 'o' and array[i][j-3] != 'x' and array[i+1][j-3] != '-' and aiDone == False:
                     array[i][j-3] = 'x'
                     aiDone = True
                     print("ThreadID:",threadID," AI move: Horizontal Block Left")
-            if j < 4:
+            if j > 2 and i == 6:                 
+                if array[i][j] == 'o' and array[i][j-1] == 'o'  and array[i][j-2] == 'o' and array[i][j-3] != 'o' and array[i][j-3] != 'x' and aiDone == False:
+                    array[i][j-3] = 'x'
+                    aiDone = True
+                    print("ThreadID:",threadID," AI move: Horizontal Block Left Bottom Row")
+            if j < 4 and i < 6:
                 if array[i][j] == 'o' and array[i][j+1] == 'o'  and array[i][j+2] == 'o' and array[i][j+3] != 'o' and array[i][j+3] != 'x' and array[i+1][j+3] != '-' and aiDone == False:
                     array[i][j+3] = 'x'
                     aiDone = True
                     print("ThreadID:",threadID," AI move: Horizontal Block Right")
+            if j < 4 and i == 6:
+                if array[i][j] == 'o' and array[i][j+1] == 'o'  and array[i][j+2] == 'o' and array[i][j+3] != 'o' and array[i][j+3] != 'x' and aiDone == False:
+                    array[i][j+3] = 'x'
+                    aiDone = True
+                    print("ThreadID:",threadID," AI move: Horizontal Block Right Bottom Row")
             if j > 2 and i > 2:
                 if array[i][j] == 'o' and array[i-1][j-1] == 'o' and array[i-2][j-2] == 'o' and array[i-3][j-3] != 'o' and array[i-3][j-3] != 'x' and array[i-2][j-3] != '-' and aiDone == False:
                     array[i-3][j-3] = 'x'
@@ -231,7 +241,12 @@ def aiTurn(threadID, array,token = 'x'):
                     array[i-3][j] = 'x'
                     print("ThreadID:",threadID," AI move: Vert win")
                     aiDone = True
-            if j > 2 and i < ROWS-1:
+            if j > 2 and i == 6:
+                if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and aiDone == False:
+                    array[i][j-3] = 'x'
+                    print("Horiz win Bottom row")
+                    aiDone = True
+            if j > 2 and i < 6:
                 if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and array[i+1][j-3] != '-' and aiDone == False:
                     array[i][j-3] = 'x'
                     print("ThreadID:",threadID," AI move: Horiz win")
@@ -246,7 +261,6 @@ def aiTurn(threadID, array,token = 'x'):
                     array[i-3][j+3] = 'x'
                     print("ThreadID:",threadID," AI move: Diag win2")
                     aiDone = True
-
     for i in range(ROWS):
         for j in range(COLS):
             #Check for possible short lines
@@ -255,11 +269,18 @@ def aiTurn(threadID, array,token = 'x'):
                     array[i-2][j] = 'x'
                     aiDone = True
                     print("ThreadID:",threadID," AI move: Short vert")
-            if j > 1 and i < ROWS-1:
+            if j > 1 and i == 6:
+                if array[i][j] == token and array[i][j-1] == token and array[i][j-2] == '-' and aiDone == False:
+                    array[i][j-2] = 'x'
+                    aiDone = True
+                    print("ThreadID:",threadID," AI move: Short horiz Bottom row")
+            if j > 1 and i < 6:
                 if array[i][j] == token and array[i][j-1] == token and array[i][j-2] == '-' and array[i+1][j-2] != '-' and aiDone == False:
                     array[i][j-2] = 'x'
                     aiDone = True
                     print("ThreadID:",threadID," AI move: Short horiz")
+
+
             """if j > 1 and i > 1:
                 if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == '-' and array[i-2][j-1] != '-' and aiDone == False:
                     array[i-2][j-2] = 'x'
