@@ -192,7 +192,7 @@ def aiTurn(array,token = 'x'):
                     array[i][j-3] = 'x'
                     aiDone = True
                     print("Horizontal Block")
-            if j > 2 and i > 2:
+            """if j > 2 and i > 2:
                 if array[i][j] == 'o' and array[i-1][j-1] == 'o' and array[i-2][j-2] == 'o' and array[i-3][j-3] != 'o' and array[i-3][j-3] != 'x' and array[i-3][j-2] != '-' and aiDone == False:
                     array[i-3][j-3] = 'x'
                     aiDone = True
@@ -201,7 +201,7 @@ def aiTurn(array,token = 'x'):
                 if array[i][j] == 'o' and array[i-1][j+1] == 'o' and array[i-2][j+2] == 'o' and array[i-3][j+3] != 'o' and array[i-3][j+3] != 'x' and array[i-3][j+2] != '-' and aiDone == False:
                     array[i-3][j+3] = 'x'
                     aiDone = True
-                    print("Diag Block2")
+                    print("Diag Block2")"""
     
     for i in range(ROWS):
         for j in range(COLS):
