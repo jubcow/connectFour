@@ -3,14 +3,13 @@
 Connect Four client/server program (Client portion)
 @author Joshua Butler
 @author John Pruchnic
+@date 4/16/2019
 
 I hereby declare upon my word of honor that I have neither given nor received unauthorized help on this work.
 """
 
 import socket
-import select
 import sys
-import re
 import json
 
 a = {} # initialize to empty dictionary
@@ -115,7 +114,9 @@ def makePretty(arrayStr):
 
     return prettyStr + message
 
-def goodInput(inp): # returns boolean
+def goodInput(inp):
+    """Boolean function to validate input
+    """
     try:
         x = int(inp)
     except:
@@ -126,19 +127,14 @@ def goodInput(inp): # returns boolean
 
 class tc:
     """text color
-        extended ascii color codes. used to color the tokens
-        gathered from stackoverflow answers:
-        https://stackoverflow.com/questions/287871/print-in-terminal-with-colors
+        Extended ascii color codes are used to color the tokens.
     """
-    #TODO remove unused color codes (wait till done)
     CEND      = '\33[0m'
     CBOLD     = '\33[1m'
-    
     CRED    = '\33[31m'
     CGREEN  = '\33[32m'
     CYELLOW = '\33[33m'
     CBLUE   = '\33[34m'
-
     CBLUE2   = '\33[94m'
 
 def sendString(sock, string):

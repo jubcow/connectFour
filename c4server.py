@@ -3,6 +3,7 @@
 Connect Four client/server program (Server portion)
 @author Joshua Butler
 @author John Pruchnic
+@date 4/16/2019
 
 I hereby declare upon my word of honor that I have neither given nor received unauthorized help on this work.
 """
@@ -11,7 +12,6 @@ import socket
 import random
 import json
 import sys
-from pprint import pprint
 import threading
 
 a = {}
@@ -59,12 +59,18 @@ def main():
         
     
 class gameThread(threading.Thread):
+    """Class gameThread is instantiated to run a game session for each connected client
+    """
     def __init__(self, threadID, conn, addr):
+        """constructor requires a threadID, the connection object, and the client's address
+        """
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.conn = conn
         self.addr = addr
     def run(self):
+        """method that runs when start() is called on the gameThread object, runs the game logic
+        """
         print("Starting game thread id: ",self.threadID," with ",self.addr)
         playGame(self.conn, self.addr, self.threadID)
         return self.threadID
@@ -149,7 +155,9 @@ def recString(conn):
     """
     return conn.recv(4096).decode()
 
-def goodInput(inp): # returns boolean
+def goodInput(inp):
+    """Boolean function to validate input
+    """
     try:
         x = int(inp)
     except:
@@ -159,15 +167,12 @@ def goodInput(inp): # returns boolean
     return 1
 
 def legalMove(array, c):
+    """Boolean function to check if column c is full
+    """
     if array[0][int(c)] == '-':
         return 1
     else:
         return 0
-
-def printArr(array):
-    """Helper function in case we need to see the server's view of the array
-    """
-    pprint(array)
 
 def sendArr(array, forced_mesg=""):
     """Function that puts the current array into a string and returns the string to be sent to the client. 
@@ -179,6 +184,8 @@ def sendArr(array, forced_mesg=""):
     return ArrayString + "#" + forced_mesg
 
 def aiRandomTurn(array):
+    """Function to compute a random valid turn for the AI
+    """
     r = 5
     c = random.randrange(6)
 
@@ -190,7 +197,8 @@ def aiRandomTurn(array):
     array[r][c] = 'x'
 
 def aiTurn(threadID, array,token = 'x'):
-    """Function for AI taking a turn, AI will check for possible win conditions it could take"""
+    """Function for AI taking a turn, AI will check for possible win conditions it could take
+    """
     aiDone = False
 
     for i in range(ROWS):
@@ -241,12 +249,12 @@ def aiTurn(threadID, array,token = 'x'):
                     array[i-3][j] = 'x'
                     print("ThreadID:",threadID," AI move: Vert win")
                     aiDone = True
-            if j > 2 and i == 6:
+            if j > 2 and i == ROWS-1:
                 if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and aiDone == False:
                     array[i][j-3] = 'x'
                     print("ThreadID:",threadID," AI move: Horiz win Bottom row")
                     aiDone = True
-            if j > 2 and i < 6:
+            if j > 2 and i < ROWS-1:
                 if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and array[i+1][j-3] != '-' and aiDone == False:
                     array[i][j-3] = 'x'
                     print("ThreadID:",threadID," AI move: Horiz win")
@@ -269,12 +277,12 @@ def aiTurn(threadID, array,token = 'x'):
                     array[i-2][j] = 'x'
                     aiDone = True
                     print("ThreadID:",threadID," AI move: Short vert")
-            if j > 1 and i == 6:
+            if j > 1 and i == ROWS-1:
                 if array[i][j] == token and array[i][j-1] == token and array[i][j-2] == '-' and aiDone == False:
                     array[i][j-2] = 'x'
                     aiDone = True
                     print("ThreadID:",threadID," AI move: Short horiz Bottom row")
-            if j > 1 and i < 6:
+            if j > 1 and i < ROWS-1:
                 if array[i][j] == token and array[i][j-1] == token and array[i][j-2] == '-' and array[i+1][j-2] != '-' and aiDone == False:
                     array[i][j-2] = 'x'
                     aiDone = True
