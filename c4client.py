@@ -60,6 +60,7 @@ def main():
 
 def makePretty(arrayStr):
     """Build a pretty representation of the current layout 
+        and parse the string for messages
           ___________________________
          |   |   |   |   |   |   |   |
          |---|---|---|---|---|---|---|
@@ -81,36 +82,39 @@ def makePretty(arrayStr):
     message = ""
 
     if arrayStr == "":
-    	message = "\n   " + tc.CBOLD + tc.CYELLOW + "Server provided invalid response, exiting..." + tc.CEND
-    	END_GAME = True
+        message = "\n   " + tc.CBOLD + tc.CYELLOW + "Server provided invalid response, exiting..." + tc.CEND
+        END_GAME = True
     else:
-	    # deterine char and color of tokens
-	    ENEMY_TOKEN = tc.CEND + tc.CBOLD + tc.CRED  + "O" + tc.CEND + tc.CBLUE 
-	    BUDDY_TOKEN = tc.CEND + tc.CBOLD + tc.CBLUE2 + "O" + tc.CEND + tc.CBLUE 
+        # deterine char and color of tokens
+        ENEMY_TOKEN = tc.CEND + tc.CBOLD + tc.CRED  + "O" + tc.CEND + tc.CBLUE 
+        BUDDY_TOKEN = tc.CEND + tc.CBOLD + tc.CBLUE2 + "O" + tc.CEND + tc.CBLUE 
 
-	    # generate pretty board around data of dimensions COLS and ROWS
-	    top     = "  " + (COLS-1)*"____" + "___ \n"
-	    divider = " |" + COLS*"---|" + "\n"
-	    bottom  = " _" + COLS*"____" + "\n"
-	    numbers = " |" + ''.join([" "+str(x)+" |" for x in range(COLS)]) + "\n"
-	    array = [ ''.join([" | " + str(arrayStr[COLS*j + i]) for i in range(COLS)]) + " | \n" for j in range(ROWS)]
-	    prettyStr = tc.CBLUE + top + divider.join(array) + divider + tc.CEND + tc.CBOLD + tc.CBLUE + bottom + numbers + tc.CEND
+        # generate pretty board around data of dimensions COLS and ROWS
+        top     = "  " + (COLS-1)*"____" + "___ \n"
+        divider = " |" + COLS*"---|" + "\n"
+        bottom  = " _" + COLS*"____" + "\n"
+        numbers = " |" + ''.join([" "+str(x)+" |" for x in range(COLS)]) + "\n"
+        array = [ ''.join([" | " + str(arrayStr[COLS*j + i]) for i in range(COLS)]) + " | \n" for j in range(ROWS)]
+        prettyStr = tc.CBLUE + top + divider.join(array) + divider + tc.CEND + tc.CBOLD + tc.CBLUE + bottom + numbers + tc.CEND
 
-	    # subsitute known tokens with pretty colorized versions
-	    prettyStr = prettyStr.replace(' - ', '   ')
-	    prettyStr = prettyStr.replace('x', ENEMY_TOKEN)
-	    prettyStr = prettyStr.replace('o', BUDDY_TOKEN)
+        # subsitute known tokens with pretty colorized versions
+        prettyStr = prettyStr.replace(' - ', '   ')
+        prettyStr = prettyStr.replace('x', ENEMY_TOKEN)
+        prettyStr = prettyStr.replace('o', BUDDY_TOKEN)
 
-	    message = arrayStr.split("#")[1]
-	    if not message == "":
-	        if "win" in message.lower():
-	            END_GAME = True
-	            message = "\n   " + tc.CBOLD + tc.CGREEN + message + tc.CEND
-	        elif "lose" in message.lower():
-	            END_GAME = True
-	            message = "\n   " + tc.CBOLD + tc.CRED + message + tc.CEND
-	        else:
-	            message = "\n   " + tc.CBOLD + tc.CYELLOW + message + tc.CEND
+        message = arrayStr.split("#")[1]
+        if not message == "":
+            if "win" in message.lower():
+                END_GAME = True
+                message = "\n   " + tc.CBOLD + tc.CGREEN + message + tc.CEND
+            elif "lose" in message.lower():
+                END_GAME = True
+                message = "\n   " + tc.CBOLD + tc.CRED + message + tc.CEND
+            elif "draw" in message.lower():
+                END_GAME = True
+                message = "\n   " + tc.CBOLD + tc.CYELLOW + message + tc.CEND
+            else:
+                message = "\n   " + tc.CBOLD + tc.CYELLOW + message + tc.CEND
 
     return prettyStr + message
 

@@ -187,10 +187,10 @@ def aiRandomTurn(array):
     """Function to compute a random valid turn for the AI
     """
     r = 5
-    c = random.randrange(6)
+    c = random.randrange(0, 7, 1)
 
     while array[0][c] == 'o' or array[0][c] == 'x':   #if the column is full reassign
-        c = random.randrange(6)
+        c = c = random.randrange(0, 7, 1)
 
     while array[r][c] == 'o' or array[r][c] == 'x' and r > 0:
         r-=1
@@ -355,8 +355,6 @@ def checkDraw(array):
         for j in range(COLS):
             if array[i][j] == 'o' or array[i][j] == 'x':
                 count += 1
-            j -= 1
-        i -= 1
     #print("count: " + str(count))
     if count == maxCount:
         sendme = sendArr(array) + "Draw!\n"
