@@ -18,7 +18,16 @@ try:
     with open('addresses.json') as server_json:
         a = json.load(server_json)
 except FileNotFoundError:
-    print("Can't find 'addresses.json' - this must contain your IP information!")
+    print("""Can't find 'addresses.json' - this must contain your IP information!
+Match the form:
+
+{
+    "SERVER": {
+        "INTERNAL":"10.142.0.2",
+        "EXTERNAL":"35.185.114.102",
+        "PORT":"4040"
+    }
+}""")
     sys.exit()
 
 # host (external) IP address and port
