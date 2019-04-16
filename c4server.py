@@ -218,20 +218,20 @@ def aiTurn(array,token = 'x'):
                     print("Vert win")
                     aiDone = True
             if j > 2:
-                if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and aiDone == False:
+                if array[i][j] == token and array[i][j-1] == token  and array[i][j-2] == token and array[i][j-3] == '-' and array[i+1][j-3] != '-' and aiDone == False:
                     array[i][j-3] = 'x'
                     print("Horiz win")
                     aiDone = True
-            """if j > 2 and i > 2:
-                if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == token and array[i-3][j-3] == '-' and array[i-3][j-2] != '-' and aiDone == False:
+            if j > 2 and i > 2:
+                if array[i][j] == token and array[i-1][j-1] == token and array[i-2][j-2] == token and array[i-3][j-3] == '-' and array[i-2][j-3] != '-' and aiDone == False:
                     array[i-3][j-3] = 'x'
                     print("Diag win")
                     aiDone = True
             if i > 2 and j < 3:
-                if array[i][j] == token and array[i-1][j+1] == token and array[i-2][j+2] == token and array[i-3][j+3] == '-' and array[i-3][j+4] != '-' and aiDone == False:
+                if array[i][j] == token and array[i-1][j+1] == token and array[i-2][j+2] == token and array[i-3][j+3] == '-' and array[i-2][j+3] != '-' and aiDone == False:
                     array[i-3][j+3] = 'x'
                     print("Diag win2")
-                    aiDone = True"""
+                    aiDone = True
 
     for i in range(ROWS):
         for j in range(COLS):
@@ -242,7 +242,7 @@ def aiTurn(array,token = 'x'):
                     aiDone = True
                     print("Short vert")
             if j > 1:
-                if array[i][j] == token and array[i][j-1] == token and array[i][j-2] == '-' and aiDone == False:
+                if array[i][j] == token and array[i][j-1] == token and array[i][j-2] == '-' and array[i+1][j-2] != '-' and aiDone == False:
                     array[i][j-2] = 'x'
                     aiDone = True
                     print("Short horiz")
