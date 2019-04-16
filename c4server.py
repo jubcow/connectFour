@@ -188,20 +188,25 @@ def aiTurn(array,token = 'x'):
                     aiDone = True
                     print("Vertical block")
             if j > 2:
-                if array[i][j] == 'o' and array[i][j-1] == 'o'  and array[i][j-2] == 'o' and array[i][j-3] != 'o' and array[i][j-3] != 'x' and aiDone == False:
+                if array[i][j] == 'o' and array[i][j-1] == 'o'  and array[i][j-2] == 'o' and array[i][j-3] != 'o' and array[i][j-3] != 'x' and array[i+1][j-3] != '-' and aiDone == False:
                     array[i][j-3] = 'x'
                     aiDone = True
-                    print("Horizontal Block")
-            """if j > 2 and i > 2:
-                if array[i][j] == 'o' and array[i-1][j-1] == 'o' and array[i-2][j-2] == 'o' and array[i-3][j-3] != 'o' and array[i-3][j-3] != 'x' and array[i-3][j-2] != '-' and aiDone == False:
+                    print("Horizontal Block Left")
+            if j < 4:
+                if array[i][j] == 'o' and array[i][j+1] == 'o'  and array[i][j+2] == 'o' and array[i][j+3] != 'o' and array[i][j+3] != 'x' and array[i+1][j+3] != '-' and aiDone == False:
+                    array[i][j+3] = 'x'
+                    aiDone = True
+                    print("Horizontal Block Right")
+            if j > 2 and i > 2:
+                if array[i][j] == 'o' and array[i-1][j-1] == 'o' and array[i-2][j-2] == 'o' and array[i-3][j-3] != 'o' and array[i-3][j-3] != 'x' and array[i-2][j-3] != '-' and aiDone == False:
                     array[i-3][j-3] = 'x'
                     aiDone = True
                     print("Diag Block")
             if i > 2 and j < 3:
-                if array[i][j] == 'o' and array[i-1][j+1] == 'o' and array[i-2][j+2] == 'o' and array[i-3][j+3] != 'o' and array[i-3][j+3] != 'x' and array[i-3][j+2] != '-' and aiDone == False:
+                if array[i][j] == 'o' and array[i-1][j+1] == 'o' and array[i-2][j+2] == 'o' and array[i-3][j+3] != 'o' and array[i-3][j+3] != 'x' and array[i-2][j+3] != '-' and aiDone == False:
                     array[i-3][j+3] = 'x'
                     aiDone = True
-                    print("Diag Block2")"""
+                    print("Diag Block2")
     
     for i in range(ROWS):
         for j in range(COLS):
